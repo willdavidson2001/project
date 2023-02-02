@@ -1,0 +1,217 @@
+---
+title: "Analysis of Food Banks over COVID"
+subtitle: "My subtitle if needed"
+author: "Will Davidson"
+thanks: "Code and data are available at: LINK."
+date: "`r Sys.time()`"
+date-format: "D MMMM YYYY"
+abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
+format: pdf
+bibliography: references.bib
+---
+
+```{r}
+#### Preamble ####
+# Purpose: Read in data from the Food Banks and make a
+# graph of the number of people who used them before and after Covid
+# Author: Will Davidson
+# Email: davidsonwill200@gmail.com  
+# Date: 3 February 2023
+
+#### Workspace set-up ####
+install.packages("opendatatoronto")
+install.packages("lubridate")
+install.packages("knitr")
+
+library(knitr)
+library(janitor)
+library(lubridate)
+library(opendatatoronto)
+library(tidyverse)
+```
+
+```{r}
+library(tidyverse) # A collection of data-related packages
+library(janitor) # Helps clean datasets
+```
+
+```{r}
+#### Acquire ####
+food_banks <-
+  # Each package is associated with a unique id  found in the "For 
+  # Developers" tab of the relevant page from Open Data Toronto
+  # https://open.toronto.ca/dataset/toronto-s-dashboard-key-indicators/
+  list_package_resources("c6d64e9b-f85a-4084-be14-60cf18509203") |>
+  # Within that package, we are interested in the 2021 dataset
+  filter(name == 
+    "Toronto progress portal - Key metrics") |>
+  # Having reduced the dataset to one row we can get the resource
+  get_resource()
+
+write_csv(
+  x = food_banks,
+  file = "food_banks.csv"
+)
+
+head(food_banks)
+```
+
+```{r}
+food_banks_clean <-
+  clean_names(food_banks) |>
+  select(measure_value, id, year) 
+
+head(food_banks_clean)
+```
+
+
+```{r}
+#### Explore ####
+food_banks_clean <-
+  clean_names(food_banks) |>
+  slice(4018:4109) 
+
+head(food_banks_clean)
+
+write_csv(
+  x = food_banks_clean,
+  file = "cleaned_food_banks.csv"
+)
+```
+
+```{r}
+ggplot(data = food_banks_clean,
+       mapping = aes(x = year,
+                     y = measure_value))+
+  geom_point(size=5)
+  geom_line(colour = "red")
+```
+
+```{r}
+ggplot(food_banks_clean, aes(year, measure_value))+
+  geom_point(size=3)+
+  geom_line(colour = "red")
+```
+
+```{r}
+food_banks_clean %>%
+  ggplot(aes(year, measure_value,
+             colour = period_number_in_year))+
+  geom_point(size = 3, alpha = 0.5)+
+  geom_smooth(method = lm, se = F)+
+  facet_wrap(~category)+
+  labs(title = "Analysis of Food Banks")+
+  theme_bw()
+```
+
+
+
+
+food_banks_clean <-
+  clean_names(food_banks) |>
+  select(measure_value, id, year) 
+
+head(food_banks_clean)
+
+food_banks_clean <-
+  clean_names(food_banks) |>
+  slice(8489:8551) 
+
+head(food_banks_clean)
+
+write_csv(
+  x = food_banks_clean,
+  file = "super_cleaned_food_banks.csv"
+)
+```{r}
+super_cleaned_food_banks <- ggplot(food_banks_clean, aes(x = year, y = measure_value,
+  colour = period_number_in_year))+
+geom_point(size = 3, alpha = 0.5)+
+geom_smooth(method = lm, se = F)+
+facet_wrap(~category)+
+labs(title = "Analysis of Community Housing- Individual")+
+theme_bw()
+```
+
+
+
+
+```{r}
+food_banks_clean <-
+  clean_names(food_banks) |>
+  select(measure_value, id, year) 
+
+head(food_banks_clean)
+
+food_banks_clean <-
+  clean_names(food_banks) |>
+  slice(8552:8614) 
+
+head(food_banks_clean)
+
+write_csv(
+  x = food_banks_clean,
+  file = "supered_cleaned_food_banks.csv"
+)
+  
+super_cleaned_food_banks <-
+ggplot(food_banks_clean, aes(year, measure_value,
+  colour = period_number_in_year))+
+geom_point(size = 3, alpha = 0.5)+
+geom_smooth(method = lm, se = F)+
+facet_wrap(~category)+
+labs(title = "Analysis of Community Housing- Family")+
+theme_bw()
+```
+
+```{r}
+food_banks_clean <-
+  clean_names(food_banks) |>
+  select(measure_value, id, year) 
+
+head(food_banks_clean)
+
+food_banks_clean <-
+  clean_names(food_banks) |>
+  slice(1703:1867) 
+
+head(food_banks_clean)
+
+write_csv(
+  x = food_banks_clean,
+  file = "supersuper_cleaned_food_banks.csv"
+)
+
+super_cleaned_food_banks <-
+ggplot(food_banks_clean, aes(year, measure_value,
+  colour = period_number_in_year))+
+geom_point(size = 3, alpha = 0.5)+
+geom_smooth(method = lm, se = F)+
+facet_wrap(~category)+
+labs(title = "Average Home Price")+
+theme_bw()
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+References
+
+R Core Team (2022). R: A language and environment for statistical   computing. R Foundation 
+
+for Statistical Computing, Vienna,   Austria. URL https://www.R-project.org/.
+
+H. Wickham. ggplot2: Elegant Graphics for Data Analysis.
+ 
+ Springer-Verlag New York, 2016.
+
+
